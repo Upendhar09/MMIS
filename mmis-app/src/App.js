@@ -17,10 +17,11 @@ const INITIAL_DATA = {
     ...Array.from({ length: 20 }, (_, i) => ({ machineID: `C-${String(i + 1).padStart(2, '0')}`, category: 'C', name: `C-${String(i + 1).padStart(2, '0')}`, lineProduct: 'Packaging Line' })),
   ],
   employees: [
-    { employeeID: 'E001', name: 'John Smith', designation: 'Senior Technician', sector: 'Mechanical', shift: 'Morning' },
-    { employeeID: 'E002', name: 'Sarah Johnson', designation: 'Electrical Engineer', sector: 'Electrical', shift: 'Afternoon' },
-    { employeeID: 'E003', name: 'Mike Davis', designation: 'Maintenance Tech', sector: 'Mechanical', shift: 'Night' },
-    { employeeID: 'E004', name: 'Admin User', designation: 'Warehouse Manager', sector: 'Management', shift: 'Morning' },
+    { employeeID: 'E001', name: 'Thong Liu', designation: 'Test Manager', sector: 'Engineer', shift: 'Morning' },
+    { employeeID: 'E002', name: 'Upendhar Deshaboina', designation: 'Test Engineer', sector: 'Engineer', shift: 'Morning' },
+    { employeeID: 'E003', name: 'Sohail Mohammed', designation: 'Test Engineer', sector: 'Engineer', shift: 'Morning' },
+    { employeeID: 'E003', name: 'Saketh Gondela', designation: 'Test Engineer', sector: 'Engineer', shift: 'Morning' },
+    { employeeID: 'E004', name: 'Admin User', designation: 'Warehouse Manager', sector: 'Management', shift: 'Evening' },
   ],
   transactions: [],
   stockingHistory: [],
@@ -41,6 +42,7 @@ export default function MMIS() {
   const [quantity, setQuantity] = useState(1);
   const [remarks, setRemarks] = useState('');
   const [workflowStep, setWorkflowStep] = useState('select-item');
+  const [cancelConfirmation, setCancelConfirmation] = useState(null);
 
   // Load data from storage on mount
   useEffect(() => {
@@ -314,7 +316,7 @@ export default function MMIS() {
                 <Wrench className="text-indigo-600" size={32} />
               </div>
               <h1 className="text-3xl font-bold">MMIS</h1>
-              <p className="text-indigo-200 text-sm mt-2">Machine Maintenance Inventory System</p>
+              <p className="text-indigo-200 text-sm mt-2">Machine Maintenance Inventory System</p>  {/* Page Title */}
             </div>
           </div>
         </div>
@@ -613,6 +615,17 @@ export default function MMIS() {
                     className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none"
                   />
                 </div>
+                <div>
+                  <label className="block text-sm text-gray-600 mb-2">Remarks / Notes</label>
+                  <textarea
+                    value={remarks}
+                    onChange={(e) => setRemarks(e.target.value)}
+                    placeholder="Why is this item needed? What work is being performed?"
+                    rows="4"
+                    className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none resize-none"
+                  />
+                  <div className="text-xs text-gray-500 mt-1">Optional: Describe the purpose or work being done</div>
+                </div>
                 <button
                   onClick={handleRequest}
                   className="w-full p-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors"
@@ -826,7 +839,7 @@ export default function MMIS() {
       );
     });
 
-    const isManagement = currentUser.sector === 'Management';
+    const isManagement = currentUser?.sector === 'Management';
 
     return (
       <div className="min-h-screen bg-gray-50">
@@ -906,6 +919,12 @@ export default function MMIS() {
                             <div>Checked out: {new Date(transaction.timestampOut).toLocaleString()}</div>
                             {transaction.timestampIn && (
                               <div>Returned: {new Date(transaction.timestampIn).toLocaleString()}</div>
+                            )}
+                            {transaction.remarks && (
+                              <div className="mt-2 p-2 bg-yellow-50 border-l-2 border-yellow-400 rounded">
+                                <div className="text-xs text-yellow-700 font-semibold">Remarks:</div>
+                                <div className="text-sm text-gray-700 italic">{transaction.remarks}</div>
+                              </div>
                             )}
                           </div>
                         </div>
